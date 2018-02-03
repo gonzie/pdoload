@@ -1,7 +1,8 @@
 # PDOLoad
 ***PDOLoad*** is a small PDO wrapper to provide read/write endpoints and load balancing capabilities in one line of code.
 
-* Add multiple read and write endpoints
+**Main Features**
+* Add multiple read and write endpoints.
 * ***One line implementation***. No need to rewrite your PDO queries.
 * Transaction aware. Any reads while a transaction is active will be performed on the write connection.
 
