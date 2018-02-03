@@ -3,8 +3,11 @@
     "description": "Small PDO wrapper to provide read/write split and load balancing in one line of code.",
     "keywords": ["load balancing", "read write", "pdo", "load balancer"],
     "type": "package",
-    "require": {},
+    "require": {
+        "php": ">=7.0"
+    },
     "require-dev": {
+        "php": ">=7.0",
         "phpunit/phpunit": "^6"
     },
     "license": "MIT",
