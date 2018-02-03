@@ -1,0 +1,22 @@
+{
+    "name": "gonzie/pdoload",
+    "description": "Small PDO wrapper to provide read/write split and load balancing in one line of code.",
+    "keywords": ["load balancing", "read write", "pdo", "load balancer"],
+    "type": "package",
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6"
+    },
+    "license": "MIT",
+    "authors": [{
+        "name": "gonzie",
+        "email": "hello@gon.zie"
+    }],
+    "autoload": {
+        "psr-4": {
+            "gonzie\\PDOLoad\\" : "src/"
+        }
+    },
+    "version": "1.0.0",
+    "minimum-stability": "dev"
+}
