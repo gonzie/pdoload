@@ -4,7 +4,7 @@
     "keywords": ["load balancing", "read write", "pdo", "load balancer"],
     "type": "package",
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.0"
     },
     "require-dev": {
         "php": ">=7.0",
