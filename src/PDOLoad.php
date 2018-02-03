@@ -2,7 +2,7 @@
 
 namespace gonzie\PDOLoad;
 
-Class PDOLoad
+class PDOLoad
 {
     const DEFAULT_DRIVER = 'mysql';
     const DEFAULT_PORT = null;
@@ -35,47 +35,28 @@ Class PDOLoad
             return true;
         }
 
-        foreach ($options as $key => $val) {
-
-            if (in_array($key, self::DEFAULT_ALLOWED)) {
-                $this->{'default_'.$key} = $val;
-            }
-        }
+        foreach ($options as $key => $val)
+            if (in_array($key, self::DEFAULT_ALLOWED))
+                $this->{'default_' . $key} = $val;
 
 
-        if (isset($options['writes'])) {
-            $w = $options['writes'][array_rand($options['writes'])];
-
-            $this->pdo_write = $this->initPDO(
-                $w['host'],
-                $this->default_dbname ?? $w['dbname'],
-                $this->default_user ?? $w['user'],
-                $this->default_password ?? $w['password'],
-                $this->default_port ?? $w['port'] ?? self::DEFAULT_PORT,
-                $this->default_driver ?? $w['driver'] ?? self::DEFAULT_DRIVER
-            );
-        }
+        if (isset($options['writes']))
+            $this->pickOne($options['writes'], 'write');
 
 
-        if (isset($options['reads'])) {
-            $r = $options['reads'][array_rand($options['reads'])];
-
-            $this->pdo_read = $this->initPDO(
-                $r['host'],
-                $this->default_dbname ?? $r['dbname'],
-                $this->default_user ?? $r['user'],
-                $this->default_password ?? $r['password'],
-                $this->default_port ?? $r['port'] ?? self::DEFAULT_PORT,
-                $this->default_driver ?? $r['driver'] ?? self::DEFAULT_DRIVER
-            );
-        } else {
+        if (isset($options['reads']))
+            $this->pickOne($options['reads'], 'read');
+        else
             $this->pdo_read = $this->pdo_write;
-        }
+
     }
 
 
     private function initPDO($host, $db, $user, $password, $port = null, $driver = 'mysql')
     {
+        if (gettype($host) == 'object' && is_a($host, 'PDO'))
+            return $host;
+
         $dbh =  new PDO(
             $driver . ":host=" . $host . ";dbname=" . $db . ($port ? ';port=' . $port : ''),
             $user,
@@ -85,14 +66,27 @@ Class PDOLoad
         return $dbh;
     }
 
+    private function pickOne($options, $type)
+    {
+        $o = $options[$type][array_rand($options[$type])];
 
-    public function addWrite($host, $db, $user, $password, $port = null, $driver = 'mysql')
+        $this->{'pdo_'.$type} = $this->initPDO(
+            $o['host'],
+            $this->default_dbname ?? $o['dbname'],
+            $this->default_user ?? $o['user'],
+            $this->default_password ?? $o['password'],
+            $this->default_port ?? $o['port'] ?? self::DEFAULT_PORT,
+            $this->default_driver ?? $o['driver'] ?? self::DEFAULT_DRIVER
+        );
+    }
+
+    public function addWrite($host, $db = null, $user = null, $password = null, $port = null, $driver = 'mysql')
     {
         $this->pdo_write = $this->initPDO($host, $db, $user, $password, $port, $driver);
     }
 
 
-    public function addRead($host, $db, $user, $password, $port = null, $driver = 'mysql')
+    public function addRead($host, $db = null, $user = null, $password = null, $port = null, $driver = 'mysql')
     {
         $this->pdo_read = $this->initPDO($host, $db, $user, $password, $port, $driver);
     }
@@ -100,8 +94,10 @@ Class PDOLoad
 
     public function setAttribute($attribute, $value)
     {
-        if ($this->pdo_read !== null)
+        if ($this->pdo_read != null)
             $this->pdo_read->setAttribute($attribute, $value);
+
+        $this->validate('write');
 
         return $this->pdo_write->setAttribute($attribute, $value);
     }
@@ -109,12 +105,16 @@ Class PDOLoad
 
     public function getAttribute($attribute)
     {
+        $this->validate('write');
+
         return $this->pdo_write->getAttribut($attribute);
     }
 
 
     public function quote($string, $parameter_type = PDO::PARAM_STR)
     {
+        $this->validate('write');
+
         return $this->pdo_write->quote($string, $parameter_type);
     }
 
@@ -123,12 +123,16 @@ Class PDOLoad
     {
         $this->pdo_current = $this->getConnection($statement);
 
+        $this->validate('current');
+
         return $this->pdo_current->prepare($statement, $driver_options);
     }
 
 
     public function exec($statement)
     {
+        $this->validate('write');
+
         return $this->pdo_write->exec($statement);
     }
 
@@ -141,18 +145,24 @@ Class PDOLoad
 
     public function lastInsertId($name = null)
     {
+        $this->validate('write');
+
         return $this->pdo_write->lastInsertId($name);
     }
 
 
     public function errorInfo()
     {
+        $this->validate('current');
+
         return $this->pdo_current->errorInfo();
     }
 
 
     public function errorCode()
     {
+        $this->validate('current');
+
         return $this->pdo_current->errorCode();
     }
 
@@ -186,6 +196,8 @@ Class PDOLoad
 
     public function beginTransaction()
     {
+        $this->validate('write');
+
         $this->transaction = true;
         $this->pdo_write->beginTransaction();
     }
@@ -193,6 +205,8 @@ Class PDOLoad
 
     public function rollBack()
     {
+        $this->validate('write');
+
         $this->transaction = false;
         $this->pdo_write->rollBack();
     }
@@ -200,7 +214,15 @@ Class PDOLoad
 
     public function commit()
     {
+        $this->validate('write');
+
         $this->transaction = false;
         $this->pdo_write->commit();
+    }
+
+    private function validate($type)
+    {
+        if($this->{'pdo_' . $type} == null)
+            throw new PDOLoadException('Connection of type ' . $type . ' not present.');
     }
 }
