@@ -18,8 +18,10 @@
     }],
     "autoload": {
         "psr-4": {
-            "gonzie\\PDOLoad\\" : "src/"
+            "Gonzie\\PDOLoad\\" : "src/"
         }
     },
-    "version": "1.0.0"
+    "version": "0.1",
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
