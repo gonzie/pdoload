@@ -51,7 +51,7 @@ class PDOLoad
         $this->options = $options;
 
         if ('string' === gettype($options)) {
-            if(empty($options)) {
+            if (empty($options)) {
                 throw new PDOLoadException('Invalid connection settings.');
             }
 
