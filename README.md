@@ -1,4 +1,4 @@
-[![Latest Stable Version](https://img.shields.io/packagist/v/gonzie/pdoload.svg)]()
+[![Travis CI build](https://travis-ci.org/gonzie/pdoload.svg?branch=master)]()
 [![PHP from Packagist](https://img.shields.io/packagist/php-v/gonzie/pdoload.svg)]()
 [![License from pugx](https://poser.pugx.org/gonzie/pdoload/license.svg)]()
 
