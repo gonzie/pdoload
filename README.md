@@ -1,3 +1,4 @@
+[![Latest Stable Version](https://img.shields.io/packagist/v/gonzie/pdoload.svg)]()
 [![PHP from Packagist](https://img.shields.io/packagist/php-v/gonzie/pdoload.svg)]()
 [![License from pugx](https://poser.pugx.org/gonzie/pdoload/license.svg)]()
 
@@ -29,4 +30,9 @@ composer require gonzie/pdoload
 
 
 ## Contributing
-Any changes to the Project must abide by PSR Standards (PSR 12, PSR4 and others where applicable).
+Any changes to the Project must abide by PSR Standards (PSR 2 - 12, PSR4 and others where applicable).
+
+Please run phpcs before committing any code.
+```
+./vendor/bin/phpcs --standard=psr2 src/
+```
