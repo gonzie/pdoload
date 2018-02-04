@@ -8,7 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace gonzie\PDOLoad;
+namespace Gonzie\PDOLoad;
+
+use Gonzie\PDOLoad\PDOLoadException;
 
 /**
  * [PDOLoad description]
@@ -49,6 +51,10 @@ class PDOLoad
         $this->options = $options;
 
         if ('string' === gettype($options)) {
+            if(empty($options)) {
+                throw new PDOLoadException('Invalid connection settings.');
+            }
+
             $this->pdo_writer =  new \PDO(
                 $options,
                 $user,
@@ -58,6 +64,10 @@ class PDOLoad
             $this->pdo_reader = $this->pdo_writer;
 
             return true;
+        }
+
+        if (!isset($options['writer']) || (isset($options['writer']) && count($options['writer']) === 0)) {
+            throw new PDOLoadException('At least one writer connection must be defined.');
         }
 
         foreach ($options as $key => $val) {
@@ -86,22 +96,64 @@ class PDOLoad
 
 
     /**
-     * [addWrite description]
-     * @param [type] $options [description]
+     * [getSettings description]
+     * @return [type] [description]
      */
-    public function addWrite($options)
+    public function getSettings()
     {
-        $this->pdo_writer = $this->initPDO(populate($options));
+        return $this->options;
     }
 
 
     /**
-     * [addRead description]
+     * [getActiveConnections description]
+     * @return [type] [description]
+     */
+    public function getActiveConnections()
+    {
+        return ['writer' => $this->pdo_writer, 'reader' => $this->pdo_reader];
+    }
+
+
+    /**
+     * [addWriter description]
      * @param [type] $options [description]
      */
-    public function addRead($options)
+    public function addWriter($options)
     {
-        $this->pdo_reader = $this->initPDO(populate($this->$options));
+        $this->options['writer'][] = $this->populate($options);
+        $this->pdo_writer = $this->initPDO(end($this->options['writer']));
+    }
+
+
+    /**
+     * [getWriter description]
+     * @return [type] [description]
+     */
+    public function getWriter()
+    {
+        return $this->pdo_writer;
+    }
+
+
+    /**
+     * [addReader description]
+     * @param [type] $options [description]
+     */
+    public function addReader($options)
+    {
+        $this->options['reader'][] = $this->populate($options);
+        $this->pdo_reader = $this->initPDO(end($this->options['reader']));
+    }
+
+
+    /**
+     * [getReader description]
+     * @return [type] [description]
+     */
+    public function getReader()
+    {
+        return $this->pdo_reader;
     }
 
 
@@ -136,9 +188,18 @@ class PDOLoad
     {
         $this->validate('writer');
 
-        return $this->pdo_writer->getAttribut($attribute);
+        return $this->pdo_writer->getAttribute($attribute);
     }
 
+
+    /**
+     * [getAttributeList description]
+     * @return [type] [description]
+     */
+    public function getAttributeList()
+    {
+        return $this->attributes;
+    }
 
 
     /**
@@ -169,7 +230,15 @@ class PDOLoad
 
         $this->validate('current');
 
-        return $this->pdo_current->prepare($statement, $driverOptions);
+        $stmt = $this->pdo_current->prepare($statement, $driverOptions);
+
+        if ($this->pdo_current === $this->pdo_writer) {
+            $stmt->connectionType = 'writer';
+        } else {
+            $stmt->connectionType = 'reader';
+        }
+
+        return $stmt;
     }
 
 
@@ -331,8 +400,8 @@ class PDOLoad
                 $options['dbname'],
                 ($options['port'] ? ";port=" . $options['port'] : '')
             ),
-            $user,
-            $password
+            $options['user'],
+            $options['password']
         );
 
         return $dbh;
@@ -359,7 +428,7 @@ class PDOLoad
         if (null === $this->{'pdo_'.$type}) {
             $settings = $this->$type[0];
 
-            $this->{'pdo_'.$type} = $this->initPDO(populate($settings));
+            $this->{'pdo_'.$type} = $this->initPDO($this->populate($settings));
         } else {
             if (count($this->$type) < 2 || null === $this->balancer) {
                 return;
@@ -381,7 +450,7 @@ class PDOLoad
             $settings = $this->$type[$index];
 
             $this->{'pdo_' . $type} = null;
-            $this->{'pdo_' . $type} = $this->initPDO(populate($settings));
+            $this->{'pdo_' . $type} = $this->initPDO($this->populate($settings));
         }
     }
 
@@ -395,12 +464,12 @@ class PDOLoad
     private function populate($options)
     {
         return [
-            $options['host'],
-            $options['dbname'] ?? $this->default_dbname,
-            $o['user'] ?? $this->default_user,
-            $o['password'] ?? $this->default_password,
-            $o['port'] ?? $this->default_port ??  self::DEFAULT_PORT,
-            $o['driver'] ?? $this->default_driver ?? self::DEFAULT_DRIVER,
+            'host' => $options['host'],
+            'dbname' => $options['dbname'] ?? $this->default_dbname ?? '',
+            'user' => $options['user'] ?? $this->default_user ?? '',
+            'password' => $options['password'] ?? $this->default_password ?? '',
+            'port' => $options['port'] ?? $this->default_port ??  self::DEFAULT_PORT,
+            'driver' => $options['driver'] ?? $this->default_driver ?? self::DEFAULT_DRIVER,
         ];
     }
 
