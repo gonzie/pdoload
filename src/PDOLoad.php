@@ -10,25 +10,65 @@
  */
 namespace Gonzie\PDOLoad;
 
-use Gonzie\PDOLoad\PDOLoadException;
-
 /**
  * [PDOLoad description]
  */
 class PDOLoad
 {
+    /**
+     * [DEFAULT_DRIVER description]
+     * @var string
+     */
     const DEFAULT_DRIVER = 'mysql';
+
+    /**
+     * [DEFAULT_PORT description]
+     * @var [type]
+     */
     const DEFAULT_PORT = null;
+
+    /**
+     * [DEFAULT_ALLOWED description]
+     * @var array
+     */
     const DEFAULT_ALLOWED = ['user', 'password', 'dbname', 'driver', 'port'];
 
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $options;
 
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $reader;
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $writer;
 
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $pdo_reader;
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $pdo_writer;
 
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $transaction = false;
 
     /**
@@ -37,6 +77,10 @@ class PDOLoad
      */
     protected $balancer;
 
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $attributes;
 
 
