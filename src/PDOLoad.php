@@ -43,6 +43,12 @@ class PDOLoad
      * [protected description]
      * @var [type]
      */
+    protected $overwrite_allowed = false;
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $options;
 
     /**
@@ -120,8 +126,13 @@ class PDOLoad
             throw new PDOLoadException('At least one writer connection must be defined.');
         }
 
+
+        if (isset($options['overwrite_allowed'])) {
+            $this->overwrite_allowed = $options['overwrite_allowed'];
+        }
+
         foreach ($options as $key => $val) {
-            if (in_array($key, self::DEFAULT_ALLOWED)) {
+            if (in_array($key, self::DEFAULT_ALLOWED) || $this->overwrite_allowed) {
                 $this->{'default_' . $key} = $val;
             }
         }
