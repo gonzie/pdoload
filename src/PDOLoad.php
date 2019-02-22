@@ -10,25 +10,77 @@
  */
 namespace Gonzie\PDOLoad;
 
-use Gonzie\PDOLoad\PDOLoadException;
-
 /**
  * [PDOLoad description]
  */
 class PDOLoad
 {
+    /**
+     * [DEFAULT_DRIVER description]
+     * @var string
+     */
     const DEFAULT_DRIVER = 'mysql';
-    const DEFAULT_PORT = null;
-    const DEFAULT_ALLOWED = ['user', 'password', 'dbname', 'driver', 'port'];
 
+    /**
+     * [DEFAULT_PORT description]
+     * @var [type]
+     */
+    const DEFAULT_PORT = null;
+
+    /**
+     * [DEFAULT_CHARSET description]
+     * @var [type]
+     */
+    const DEFAULT_CHARSET = 'utf8mb4';
+
+    /**
+     * [DEFAULT_ALLOWED description]
+     * @var array
+     */
+    const DEFAULT_ALLOWED = ['user', 'password', 'dbname', 'driver', 'port', 'charset'];
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
+    protected $overwrite_allowed = false;
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $options;
 
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $reader;
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $writer;
 
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $pdo_reader;
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $pdo_writer;
 
+
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $transaction = false;
 
     /**
@@ -37,6 +89,10 @@ class PDOLoad
      */
     protected $balancer;
 
+    /**
+     * [protected description]
+     * @var [type]
+     */
     protected $attributes;
 
 
@@ -51,7 +107,7 @@ class PDOLoad
         $this->options = $options;
 
         if ('string' === gettype($options)) {
-            if(empty($options)) {
+            if (empty($options)) {
                 throw new PDOLoadException('Invalid connection settings.');
             }
 
@@ -70,8 +126,13 @@ class PDOLoad
             throw new PDOLoadException('At least one writer connection must be defined.');
         }
 
+
+        if (isset($options['overwrite_allowed'])) {
+            $this->overwrite_allowed = $options['overwrite_allowed'];
+        }
+
         foreach ($options as $key => $val) {
-            if (in_array($key, self::DEFAULT_ALLOWED)) {
+            if (in_array($key, self::DEFAULT_ALLOWED) || $this->overwrite_allowed) {
                 $this->{'default_' . $key} = $val;
             }
         }
@@ -470,6 +531,7 @@ class PDOLoad
             'password' => $options['password'] ?? $this->default_password ?? '',
             'port' => $options['port'] ?? $this->default_port ??  self::DEFAULT_PORT,
             'driver' => $options['driver'] ?? $this->default_driver ?? self::DEFAULT_DRIVER,
+            'charset' => $options['charset'] ?? $this->default_charset ?? self::DEFAULT_CHARSET,
         ];
     }
 
