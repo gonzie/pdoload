@@ -28,10 +28,16 @@ class PDOLoad
     const DEFAULT_PORT = null;
 
     /**
+     * [DEFAULT_CHARSET description]
+     * @var [type]
+     */
+    const DEFAULT_CHARSET = 'utf8mb4';
+
+    /**
      * [DEFAULT_ALLOWED description]
      * @var array
      */
-    const DEFAULT_ALLOWED = ['user', 'password', 'dbname', 'driver', 'port'];
+    const DEFAULT_ALLOWED = ['user', 'password', 'dbname', 'driver', 'port', 'charset'];
 
     /**
      * [protected description]
@@ -514,6 +520,7 @@ class PDOLoad
             'password' => $options['password'] ?? $this->default_password ?? '',
             'port' => $options['port'] ?? $this->default_port ??  self::DEFAULT_PORT,
             'driver' => $options['driver'] ?? $this->default_driver ?? self::DEFAULT_DRIVER,
+            'charset' => $options['charset'] ?? $this->default_charset ?? self::DEFAULT_CHARSET,
         ];
     }
 
