@@ -323,7 +323,10 @@ class PDOLoad
      */
     public function query()
     {
-        // To be done at a later date
+        $this->validate('writer');
+
+        // Need to think of a better way of using query()
+        return call_user_func_array([$this->pdo_writer, 'query'], func_get_args());
     }
 
 
@@ -411,6 +414,30 @@ class PDOLoad
 
         $this->transaction = false;
         $this->pdo_writer->commit();
+    }
+
+
+    /**
+     * If all hell breaks loose and you're calling a function not covered by PDOLoad
+     * @param  [type] $name      [description]
+     * @param  [type] $arguments [description]
+     * @return [type]            [description]
+     */
+    public function __call($name, $arguments)
+    {
+      return call_user_func_array([$this->pdo_writer, $name], $arguments);
+    }
+
+
+    /**
+     * If all hell breaks loose and you're calling a function not covered by PDOLoad
+     * @param  [type] $name      [description]
+     * @param  [type] $arguments [description]
+     * @return [type]            [description]
+     */
+    public static function __callStatic($name, $arguments)
+    {
+      return call_user_func_array([PDO, $name], $arguments);
     }
 
 
