@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Symfony package.
+ * 
  *
  * (c) Gonzie <hello@gonz.ie>
  *
