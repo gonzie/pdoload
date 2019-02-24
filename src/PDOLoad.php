@@ -106,7 +106,7 @@ class PDOLoad
     {
         $this->options = $options;
 
-        if ('string' === gettype($options)) {
+        if (is_string($options)) {
             if (empty($options)) {
                 throw new PDOLoadException('Invalid connection settings.');
             }
@@ -476,7 +476,7 @@ class PDOLoad
      */
     private function initPDO($options)
     {
-        if ('object' === gettype($options) && is_a($options, 'PDO')) {
+        if ($options instanceof \PDO) {
             return $options;
         }
 
