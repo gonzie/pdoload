@@ -1,24 +1,31 @@
 {
     "name": "gonzie/pdoload",
     "description": "Small PDO wrapper to provide read/write split and load balancing in one line of code.",
-    "keywords": ["load balancing", "read write", "pdo", "load balancer"],
+    "keywords": [
+        "load balancing",
+        "read write",
+        "pdo",
+        "load balancer"
+    ],
     "type": "package",
     "require": {
         "php": ">=7.0"
     },
     "require-dev": {
         "php": ">=7.0",
-        "phpunit/phpunit": "^6",
+        "phpunit/phpunit": "^8.0",
         "squizlabs/php_codesniffer": "3.*"
     },
     "license": "MIT",
-    "authors": [{
-        "name": "gonzie",
-        "email": "hello@gon.zie"
-    }],
+    "authors": [
+        {
+            "name": "gonzie",
+            "email": "hello@gon.zie"
+        }
+    ],
     "autoload": {
         "psr-4": {
-            "Gonzie\\PDOLoad\\" : "src/"
+            "Gonzie\\PDOLoad\\": "src/"
         }
     },
     "minimum-stability": "dev",
