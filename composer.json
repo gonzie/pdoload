@@ -1,5 +1,5 @@
 {
-    "name": "gonzie/pdoload",
+    "name": "umfulana/pdoload",
     "description": "Small PDO wrapper to provide read/write split and load balancing in one line of code.",
     "keywords": ["load balancing", "read write", "pdo", "load balancer"],
     "type": "package",
