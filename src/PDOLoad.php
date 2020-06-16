@@ -114,7 +114,8 @@ class PDOLoad
             $this->pdo_writer =  new \PDO(
                 $options,
                 $user,
-                $password
+                $password,
+	             $options['options'] ?? null
             );
 
             $this->pdo_reader = $this->pdo_writer;
@@ -489,7 +490,8 @@ class PDOLoad
                 ($options['port'] ? ";port=" . $options['port'] : '')
             ),
             $options['user'],
-            $options['password']
+            $options['password'],
+            $options['options'] ?? null
         );
 
         return $dbh;
