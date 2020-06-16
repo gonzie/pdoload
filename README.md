@@ -52,7 +52,7 @@ $settings = [
             'dbname' =>  'test',
             'user' => 'gonzie',
             'password' => 'password',
-            'port' => '3306'
+            'port' => '3306',
             'charset' => 'utf8mb4',
         ],
         [
@@ -61,7 +61,7 @@ $settings = [
             'user' => 'gonzie',
             'password' => 'password',
             'charset' => 'utf8mb4',
-        ],
+        ]
     ],
     'writer' => [
         [
@@ -73,6 +73,9 @@ $settings = [
         ],
     ],
     'balancer' => 'round-robin',
+    'options' => [
+         PDO::ATTR_PERSISTENT => true
+    ]
 ];
 
 $dbh = new Gonzie\PDOLoad\PDOLoad($settings);
@@ -88,6 +91,7 @@ reader  | array[[connection](#connection-array "Goto connection-array")] | Requi
 writer  | array[[connection](#connection-array "Goto connection-array")] | Required. Array of `connection` arrays.
 balancer  | string | Optional, default is ` `. Available options: `round-robin` - go from top to bottom of connection's array, `fixed` - PDOLoad will pick a connection at random and stick to it, `random` - each query will pick a random connection.
 overwrite_allowed  | string | Optional, default is `false`. Some `driver` options require additional options other than the ones in the `connection` array, set this value to `true` if you need to add custom options to the array otherwise they won't be allowed.
+options  | array | PDO options
 
 ### Connection array
 Other options can be added to your liking as long as `overwrite_allowed` is set to `true`.
