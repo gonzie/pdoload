@@ -115,7 +115,7 @@ class PDOLoad
                 $options,
                 $user,
                 $password,
-	             $options['options'] ?? null
+	        $options['options'] ?? null
             );
 
             $this->pdo_reader = $this->pdo_writer;
